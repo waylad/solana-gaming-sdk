@@ -1,0 +1,19 @@
+# **/.env
+**/.env.development
+**/.env.production
+**/*.log
+**/node_modules
+**/dist
+**/downloads
+**/yarn-error.log
+**/error.log
+# **/out
+
+# Windows
+**/Thumbs.db
+**/ehthumbs.db
+**/Desktop.ini
+**/$RECYCLE.BIN/
+
+# OSX
+**/.DS_Store
