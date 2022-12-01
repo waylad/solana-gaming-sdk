@@ -1,0 +1,16 @@
+{
+  "name": "Solana PhaserJS Boilerplate Car 00030120",
+  "description": "A Solana PhaserJS Boilerplate Upgradable Car",
+  "external_url": "https://solana-gaming-sdk.pages.dev/assets/cars/00030120.svg",
+  "image": "https://solana-gaming-sdk.pages.dev/assets/cars/00030120.svg",
+  "attributes": [
+    { "car": 0, "rarity": 0.25 },
+    { "boost": 0, "rarity": 0.25 },
+    { "weight": 0, "rarity": 0.25 },
+    { "gun": 3, "rarity": 0.25 },
+    { "gear": 0, "rarity": 0.25 },
+    { "armor": 1, "rarity": 0.25 },
+    { "wheel": 2, "rarity": 0.25 },
+    { "fuel": 0, "rarity": 0.25 }
+  ]
+}
