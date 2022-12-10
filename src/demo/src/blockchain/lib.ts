@@ -1,25 +1,33 @@
 import { Metaplex, walletAdapterIdentity } from '@metaplex-foundation/js'
-import { clusterApiUrl, Connection } from '@solana/web3.js'
+import { Cluster, clusterApiUrl, Connection } from '@solana/web3.js'
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
 
 import { state } from '../state/state'
 import { CarToken } from '../state/stateTypes'
+import { PhantomProvider } from './types'
 import { getProvider } from './utils'
 
-let NETWORK: any = undefined
-let provider: any = undefined
+let provider: PhantomProvider | undefined = undefined
 let connection: any = undefined
 let metaplex: any = undefined
+let NETWORK: Cluster = 'devnet'
+let address: BigNumber | undefined = undefined
 
 export const connectWallet = async () => {
   try {
-    NETWORK = clusterApiUrl('devnet')
+    const network = clusterApiUrl(NETWORK)
     provider = getProvider()
-    connection = new Connection(NETWORK)
+    connection = new Connection(network)
     metaplex = new Metaplex(connection)
-    const resp = await provider.connect()
-    metaplex.use(walletAdapterIdentity(provider))
+    address = metaplex.identity().publicKey
+    console.log(BigNumber(address!).toString())
+    if (provider) {
+      await provider.connect()
+      await metaplex.use(walletAdapterIdentity(provider))
+    } else {
+      alert('No Network Provider')
+    }
   } catch (e: any) {
     console.log(e)
     // window.location.reload()
@@ -28,13 +36,16 @@ export const connectWallet = async () => {
 
 export const getCars = async () => {
   try {
-    const myNfts = await metaplex.nfts().findAllByOwner(metaplex.identity().publicKey).run()
+    const myNfts = await metaplex.nfts().findAllByOwner({
+      owner: metaplex.identity().publicKey,
+    })
+
     console.log(myNfts)
     myNfts.map((nft: any) => {
-      if (nft.name.indexOf('SolSpace Ship') >= 0) {
+      if (nft.name.indexOf('Car') >= 0) {
         state.ownedCars.push({
           tokenId: `${Math.floor(Math.random() * 10000)}`,
-          carCode: nft.name.replace('SolSpace Ship ', ''),
+          carCode: nft.name.replace('Car ', ''),
           price: 0,
           owned: true,
         })
@@ -49,15 +60,12 @@ export const getCars = async () => {
 }
 
 export const mintBasicCar = async () => {
-  const { nft } = await metaplex
-    .nfts()
-    .create({
-      uri: 'https://solana-gaming-sdk.pages.dev/assets/cars/00000000.json',
-      name: 'Car 00000000',
-      symbol: 'CAR',
-      sellerFeeBasisPoints: 500, // Represents 5.00%.
-    })
-    .run()
+  const { nft } = await metaplex.nfts().create({
+    uri: 'https://solana-gaming-sdk.pages.dev/assets/cars/00000000.json',
+    name: 'Car 00000000',
+    symbol: 'CAR',
+    sellerFeeBasisPoints: 500, // Represents 5.00%.
+  })
   console.log(nft)
 }
 
@@ -79,6 +87,5 @@ export const upgradeCar = async (carToken: CarToken) => {
   //     symbol: 'CAR',
   //     sellerFeeBasisPoints: 500, // Represents 5.00%.
   //   })
-  //   .run()
   // console.log(updatedNft)
 }

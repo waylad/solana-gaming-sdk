@@ -6,6 +6,7 @@
   "devDependencies": {
     "copy-webpack-plugin": "^10.2.4",
     "expose-loader": "^3.1.0",
+    "phasereditor2d-launcher": "^3.36.0",
     "ts-loader": "^9.2.8",
     "typescript": "^4.6.3",
     "webpack": "^5.72.0",
@@ -44,7 +45,8 @@
   },
   "scripts": {
     "start": "HTTPS=true && webpack --mode development && webpack serve --mode development",
-    "build": "export NODE_ENV=production && webpack --mode production"
+    "build": "export NODE_ENV=production && webpack --mode production",
+    "editor": "phasereditor2d-launcher -project . -port 1959"
   },
   "license": "MIT",
   "browserslist": {
