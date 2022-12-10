@@ -7,7 +7,7 @@ import { MarketplaceScene } from './scenes/MarketplaceScene'
 import { BgScene } from './scenes/bgScene'
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
-  title: 'Solana PhaserJS Boilerplate',
+  title: 'Solana Gaming SDK',
   url: 'https://solana-gaming-sdk.pages.dev',
   version: '3.0',
   type: Phaser.AUTO,

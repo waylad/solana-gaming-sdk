@@ -36,6 +36,8 @@ export const connectWallet = async () => {
 
 export const getCars = async () => {
   try {
+    state.ownedCars = []
+
     const myNfts = await metaplex.nfts().findAllByOwner({
       owner: metaplex.identity().publicKey,
     })
@@ -48,6 +50,7 @@ export const getCars = async () => {
           carCode: nft.name.replace('Car ', ''),
           price: 0,
           owned: true,
+          nft,
         })
       }
     })
@@ -59,12 +62,31 @@ export const getCars = async () => {
   }
 }
 
-export const mintBasicCar = async () => {
+export const isRoyaltyPaid = async (carToken: CarToken) : Promise<boolean> => {
+  if (NETWORK === 'mainnet-beta') {
+    //
+    return true
+  } else {
+    return carToken.nft.sellerFeeBasisPoints > 0
+  }
+}
+
+export const mintBasicCarWithRoyalties = async () => {
   const { nft } = await metaplex.nfts().create({
     uri: 'https://solana-gaming-sdk.pages.dev/assets/cars/00000000.json',
     name: 'Car 00000000',
     symbol: 'CAR',
     sellerFeeBasisPoints: 500, // Represents 5.00%.
+  })
+  console.log(nft)
+}
+
+export const mintBasicCarWithoutRoyalties = async () => {
+  const { nft } = await metaplex.nfts().create({
+    uri: 'https://solana-gaming-sdk.pages.dev/assets/cars/00000000.json',
+    name: 'Car 00000000',
+    symbol: 'CAR',
+    sellerFeeBasisPoints: 0, // Represents 0%.
   })
   console.log(nft)
 }
@@ -78,6 +100,10 @@ export const sellCar = async (carToken: CarToken, price: number) => {
 }
 
 export const upgradeCar = async (carToken: CarToken) => {
+  // await metaplex.nfts().update({
+  //   nftOrSft: nft,
+  //   name: "My Updated Name"
+  // });
   // Not working for some reason....
   // const { nft: updatedNft } = await metaplex
   //   .nfts()

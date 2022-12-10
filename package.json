@@ -1,7 +1,7 @@
 {
   "name": "solana-gaming-sdk",
   "version": "1.0.0",
-  "description": "Solana PhaserJS Boilerplate",
+  "description": "Solana Gaming SDK",
   "keywords": [],
   "scripts": {
     "start": "lerna exec -- yarn run --parallel start",

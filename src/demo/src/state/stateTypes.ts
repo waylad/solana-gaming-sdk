@@ -3,6 +3,7 @@ export type CarToken = {
   carCode: string
   price: number
   owned: boolean
+  nft: any
 }
 
 export type State = {

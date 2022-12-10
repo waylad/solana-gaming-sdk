@@ -1,6 +1,12 @@
 import { CarToken } from 'state/stateTypes'
 
-import { buyCar, getCars, mintBasicCar, sellCar } from '../blockchain/lib'
+import {
+  buyCar,
+  getCars,
+  isRoyaltyPaid,
+  mintBasicCarWithoutRoyalties,
+  mintBasicCarWithRoyalties,
+} from '../blockchain/lib'
 import { state } from '../state/state'
 
 export class MarketplaceScene extends Phaser.Scene {
@@ -14,7 +20,7 @@ export class MarketplaceScene extends Phaser.Scene {
 
   preload(): void {}
 
-  displayCar(this: Phaser.Scene, car: CarToken, i: number, j: number) {
+  async displayCar(this: Phaser.Scene, car: CarToken, i: number, j: number) {
     const carCell = this.add.image(0, 0, 'car-bg')
     const partCar = this.add.image(0, 0, `car${car.carCode[0]}`)
     const partBoost = this.add.image(0, 0, `boost${car.carCode[1]}`)
@@ -25,39 +31,41 @@ export class MarketplaceScene extends Phaser.Scene {
     const partWheel = this.add.image(0, 0, `wheel${car.carCode[6]}`)
     const partFuel = this.add.image(0, 0, `fuel${car.carCode[7]}`)
 
-    const textPrice = this.add
-      .text(20, 145, `${car.price / 1000000}`, {
+    const royaltyPaid = await isRoyaltyPaid(car)
+
+    const textRoyalties = this.add
+      .text(-165, 125, `${royaltyPaid ? 'ROYALTIES OK' : 'MISSING ROYALTIES'}`, {
         fontFamily: 'Electrolize',
         align: 'center',
-        wordWrap: { width: 140, useAdvancedWrap: true },
+        wordWrap: { width: 330, useAdvancedWrap: true },
       })
       .setFontSize(30)
       .setOrigin(0)
       .setColor('#ECE0C4')
 
     // Buy
-    let buttonBuy: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    if (!car.owned) buttonBuy = this.add.image(-80, 160, 'button-small')
-    buttonBuy.setInteractive({ cursor: 'pointer' })
-    buttonBuy.on('pointerdown', async () => {
-      await buyCar(car)
-      await getCars()
-      this.scene.restart()
-    })
-    let textBuy: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    if (!car.owned)
-      textBuy = new Phaser.GameObjects.Text(this, -110, 144, 'BUY', {
-        fontFamily: 'Electrolize',
-        align: 'center',
-        wordWrap: { width: 140, useAdvancedWrap: true },
-      })
-        .setFontSize(30)
-        .setOrigin(0)
-        .setColor('#ECE0C4')
+    // let buttonBuy: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
+    // if (!car.owned) buttonBuy = this.add.image(-80, 160, 'button-small')
+    // buttonBuy.setInteractive({ cursor: 'pointer' })
+    // buttonBuy.on('pointerdown', async () => {
+    //   await buyCar(car)
+    //   await getCars()
+    //   this.scene.restart()
+    // })
+    // let textBuy: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
+    // if (!car.owned)
+    //   textBuy = new Phaser.GameObjects.Text(this, -110, 144, 'BUY', {
+    //     fontFamily: 'Electrolize',
+    //     align: 'center',
+    //     wordWrap: { width: 140, useAdvancedWrap: true },
+    //   })
+    //     .setFontSize(30)
+    //     .setOrigin(0)
+    //     .setColor('#ECE0C4')
 
     // Select
     let buttonSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    if (car.owned) buttonSelect = this.add.image(-80, 160, 'button-small')
+    if (car.owned) buttonSelect = this.add.image(0, 200, 'button-small')
     buttonSelect.setInteractive({ cursor: 'pointer' })
     buttonSelect.on('pointerdown', async () => {
       state.currentCar = car
@@ -65,34 +73,34 @@ export class MarketplaceScene extends Phaser.Scene {
     })
     let textSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
     if (car.owned)
-      textSelect = new Phaser.GameObjects.Text(this, -135, 144, 'SELECT', {
+      textSelect = new Phaser.GameObjects.Text(this, -35, 184, 'PLAY', {
         fontFamily: 'Electrolize',
         align: 'center',
-        wordWrap: { width: 140, useAdvancedWrap: true },
+        wordWrap: { width: 330, useAdvancedWrap: true },
       })
         .setFontSize(30)
         .setOrigin(0)
         .setColor('#ECE0C4')
 
-    // Sell
-    let buttonSell: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    if (car.owned) buttonSell = this.add.image(80, 160, 'button-small')
-    buttonSell.setInteractive({ cursor: 'pointer' })
-    buttonSell.on('pointerdown', async () => {
-      const price = parseInt(prompt('Please enter your price', '1000000') || '1000000')
-      await sellCar(car, price)
-      await getCars()
-    })
-    let textSell: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    if (car.owned)
-      textSell = new Phaser.GameObjects.Text(this, 50, 144, 'SELL', {
-        fontFamily: 'Electrolize',
-        align: 'center',
-        wordWrap: { width: 140, useAdvancedWrap: true },
-      })
-        .setFontSize(30)
-        .setOrigin(0)
-        .setColor('#ECE0C4')
+    // // Sell
+    // let buttonSell: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
+    // if (car.owned) buttonSell = this.add.image(80, 160, 'button-small')
+    // buttonSell.setInteractive({ cursor: 'pointer' })
+    // buttonSell.on('pointerdown', async () => {
+    //   const price = parseInt(prompt('Please enter your price', '1000000') || '1000000')
+    //   await sellCar(car, price)
+    //   await getCars()
+    // })
+    // let textSell: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
+    // if (car.owned)
+    //   textSell = new Phaser.GameObjects.Text(this, 50, 144, 'SELL', {
+    //     fontFamily: 'Electrolize',
+    //     align: 'center',
+    //     wordWrap: { width: 140, useAdvancedWrap: true },
+    //   })
+    //     .setFontSize(30)
+    //     .setOrigin(0)
+    //     .setColor('#ECE0C4')
 
     let carContainer = this.add.container(0, 0, [
       partCar,
@@ -106,11 +114,13 @@ export class MarketplaceScene extends Phaser.Scene {
     ])
     carContainer.setScale(0.4)
 
-    this.add.container(
-      this.sys.canvas.width / 2 - 580 + (i % 4) * 380,
-      this.sys.canvas.height / 2 - 290 + j * 360,
-      [carCell, textPrice, carContainer, buttonBuy, buttonSelect, buttonSell, textBuy, textSelect, textSell],
-    )
+    this.add.container(this.sys.canvas.width / 2 - 580 + (i % 4) * 380, this.sys.canvas.height / 2 - 290 + j * 360, [
+      carCell,
+      textRoyalties,
+      carContainer,
+      buttonSelect,
+      textSelect,
+    ])
   }
 
   create(): void {
@@ -148,28 +158,57 @@ export class MarketplaceScene extends Phaser.Scene {
       }
     }
 
-    const buttonBg = this.add.image(this.sys.canvas.width / 2, this.sys.canvas.height - 100, 'button-big')
-    buttonBg.setInteractive({cursor: 'pointer'})
-    
-    const buttonText = this.add
-    .text(this.sys.canvas.width / 2, this.sys.canvas.height - 100, 'MINT BASIC CAR', {
-      fontFamily: 'Electrolize',
-      align: 'center',
-      wordWrap: { width: 600, useAdvancedWrap: true },
-    })
-    .setFontSize(34)
-    .setOrigin(0.5)
-
-    buttonBg.on('pointerdown', async () => {
-      buttonText.setText('LOADING...')
+    // BUY CAR WITH ROYALTIES
+    const button1Bg = this.add.image(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'button-big')
+    button1Bg.setInteractive({ cursor: 'pointer' })
+    const button1Text = this.add
+      .text(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'BUY CAR WITH ROYALTIES', {
+        fontFamily: 'Electrolize',
+        align: 'center',
+        wordWrap: { width: 600, useAdvancedWrap: true },
+      })
+      .setFontSize(34)
+      .setOrigin(0.5)
+    button1Bg.on('pointerdown', async () => {
+      button1Text.setText('LOADING...')
       try {
-        await mintBasicCar()
+        await mintBasicCarWithRoyalties()
         await getCars()
-        buttonText.setText('MINT BASIC CAR')
+        button1Text.setText('BUY CAR WITH ROYALTIES')
         this.scene.restart()
       } catch (e: any) {
         console.log(e)
-        buttonText.setText('MINT BASIC CAR')
+        button1Text.setText('BUY CAR WITH ROYALTIES')
+        alert(e)
+      }
+    })
+
+    // BUY CAR WITHOUT ROYALTIES
+    const button2Bg = this.add.image(this.sys.canvas.width / 2 + 350, this.sys.canvas.height - 100, 'button-big')
+    button2Bg.setInteractive({ cursor: 'pointer' })
+    const button2Text = this.add
+      .text(
+        this.sys.canvas.width / 2 + 350,
+        this.sys.canvas.height - 100,
+        'BUY CAR WITHOUT ROYALTIES\n(FOR DEMO PURPOSES)',
+        {
+          fontFamily: 'Electrolize',
+          align: 'center',
+          wordWrap: { width: 600, useAdvancedWrap: true },
+        },
+      )
+      .setFontSize(34)
+      .setOrigin(0.5)
+    button2Bg.on('pointerdown', async () => {
+      button2Text.setText('LOADING...')
+      try {
+        await mintBasicCarWithoutRoyalties()
+        await getCars()
+        button2Text.setText('BUY CAR WITHOUT ROYALTIES\n(FOR DEMO PURPOSES)')
+        this.scene.restart()
+      } catch (e: any) {
+        console.log(e)
+        button2Text.setText('BUY CAR WITHOUT ROYALTIES\n(FOR DEMO PURPOSES)')
         alert(e)
       }
     })
