@@ -1,5 +1,14 @@
 import { Metaplex, walletAdapterIdentity } from '@metaplex-foundation/js'
-import { Cluster, clusterApiUrl, Connection } from '@solana/web3.js'
+import {
+  Cluster,
+  clusterApiUrl,
+  Connection,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+  sendAndConfirmTransaction,
+  LAMPORTS_PER_SOL,
+} from '@solana/web3.js'
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
 
@@ -62,13 +71,54 @@ export const getCars = async () => {
   }
 }
 
-export const isRoyaltyPaid = async (carToken: CarToken) : Promise<boolean> => {
+export const isRoyaltyPaid = async (carToken: CarToken): Promise<boolean> => {
   if (NETWORK === 'mainnet-beta') {
-    const result = await axios.get('https://api.coralcube.cc/0dec5037-f67d-4da8-9eb6-97e2a09ffe9a/inspector/getMintActivities?update_authority=3HAhTuNs7fqoELpc28tghfdcMzr7ZhBz23RLRRfUCPYp&collection_symbol=gamingsdk&limit=1') 
+    const result = await axios.get(
+      'https://api.coralcube.cc/0dec5037-f67d-4da8-9eb6-97e2a09ffe9a/inspector/getMintActivities?update_authority=3HAhTuNs7fqoELpc28tghfdcMzr7ZhBz23RLRRfUCPYp&collection_symbol=gamingsdk&limit=1',
+    )
     return result.data?.[0]?.royalty_fee > 0
   } else {
     return carToken.nft.sellerFeeBasisPoints > 0
   }
+}
+
+export const payRoyalty = async (carToken: CarToken) => {
+  var recieverWallet = new PublicKey('sE7rAdV5J9kddYtD4heKrcASgoVYmr52Ccj1irbC3Dg')
+
+  // Airdrop some SOL to the sender's wallet, so that it can handle the txn fee
+  var airdropSignature = await connection.requestAirdrop(provider?.publicKey, LAMPORTS_PER_SOL)
+
+  // Confirming that the airdrop went through
+  await connection.confirmTransaction(airdropSignature)
+  console.log('Airdropped')
+
+  var transaction = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: provider?.publicKey!,
+      toPubkey: recieverWallet,
+      lamports: LAMPORTS_PER_SOL,
+    }),
+  )
+
+  // Setting the variables for the transaction
+  transaction.feePayer = await provider?.publicKey!
+  let blockhashObj = await connection.getRecentBlockhash()
+  transaction.recentBlockhash = await blockhashObj.blockhash
+
+  // Transaction constructor initialized successfully
+  if (transaction) {
+    console.log('Txn created successfully')
+  }
+
+  // Request creator to sign the transaction (allow the transaction)
+  let signed = await provider?.signTransaction(transaction)!
+  // The signature is generated
+  let signature = await connection.sendRawTransaction(signed.serialize())
+  // Confirm whether the transaction went through or not
+  await connection.confirmTransaction(signature)
+
+  //Print the signature here
+  console.log('Signature: ', signature)
 }
 
 export const mintBasicCarWithRoyalties = async () => {

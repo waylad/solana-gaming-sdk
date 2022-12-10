@@ -6,6 +6,7 @@ import {
   isRoyaltyPaid,
   mintBasicCarWithoutRoyalties,
   mintBasicCarWithRoyalties,
+  payRoyalty,
 } from '../blockchain/lib'
 import { state } from '../state/state'
 
@@ -69,11 +70,12 @@ export class MarketplaceScene extends Phaser.Scene {
     buttonSelect.setInteractive({ cursor: 'pointer' })
     buttonSelect.on('pointerdown', async () => {
       state.currentCar = car
+      if(!royaltyPaid) await payRoyalty(car)
       this.scene.start('Garage')
     })
     let textSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
     if (car.owned)
-      textSelect = new Phaser.GameObjects.Text(this, 0, 204, 'PLAY', {
+      textSelect = new Phaser.GameObjects.Text(this, 0, 204, royaltyPaid ? 'PLAY' : 'UNLOCK (1 SOL)', {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 330, useAdvancedWrap: true },
