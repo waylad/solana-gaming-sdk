@@ -13,7 +13,7 @@ This repository is a full-featured gaming SDK to create GameFi projects on Solan
 - Phaser.js boilerplate scenes to connect wallet, select NFT, upgrade NFT, and play the game
 - Physics Engine integration with [Matter.js](https://brm.io/matter-js/demo/#car) to make games that use gravity, collisions, friction, etc…
 
-💻 **[Bonus Track: Royalty Tracking API**](https://gitcoin.co/issue/29609) > The royalty-gating feature presented above uses the [Helius API](https://twitter.com/0xMert_/status/1583596887042424833) to determine if a holder has paid royalties or not.
+💻 **[Bonus Track: Royalty Tracking API**](https://gitcoin.co/issue/29609) > The royalty-gating feature presented above uses the [Coral Qube API](https://optemization.notion.site/optemization/Coral-Cube-Royalty-API-Documentation-4c37410d75ed40fe84ec212c82e33ac2) to determine if a holder has paid royalties or not.
 
 # Demo Video :
 

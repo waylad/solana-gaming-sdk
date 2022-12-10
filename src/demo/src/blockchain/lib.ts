@@ -64,8 +64,8 @@ export const getCars = async () => {
 
 export const isRoyaltyPaid = async (carToken: CarToken) : Promise<boolean> => {
   if (NETWORK === 'mainnet-beta') {
-    //
-    return true
+    const result = await axios.get('https://api.coralcube.cc/0dec5037-f67d-4da8-9eb6-97e2a09ffe9a/inspector/getMintActivities?update_authority=3HAhTuNs7fqoELpc28tghfdcMzr7ZhBz23RLRRfUCPYp&collection_symbol=gamingsdk&limit=1') 
+    return result.data?.[0]?.royalty_fee > 0
   } else {
     return carToken.nft.sellerFeeBasisPoints > 0
   }

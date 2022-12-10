@@ -34,13 +34,13 @@ export class MarketplaceScene extends Phaser.Scene {
     const royaltyPaid = await isRoyaltyPaid(car)
 
     const textRoyalties = this.add
-      .text(-165, 125, `${royaltyPaid ? 'ROYALTIES OK' : 'MISSING ROYALTIES'}`, {
+      .text(0, 135, `${royaltyPaid ? 'ROYALTIES OK' : 'MISSING ROYALTIES'}`, {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 330, useAdvancedWrap: true },
       })
       .setFontSize(30)
-      .setOrigin(0)
+      .setOrigin(0.5)
       .setColor('#ECE0C4')
 
     // Buy
@@ -73,13 +73,13 @@ export class MarketplaceScene extends Phaser.Scene {
     })
     let textSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
     if (car.owned)
-      textSelect = new Phaser.GameObjects.Text(this, -35, 184, 'PLAY', {
+      textSelect = new Phaser.GameObjects.Text(this, 0, 204, 'PLAY', {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 330, useAdvancedWrap: true },
       })
         .setFontSize(30)
-        .setOrigin(0)
+        .setOrigin(0.5)
         .setColor('#ECE0C4')
 
     // // Sell
