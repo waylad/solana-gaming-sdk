@@ -3,10 +3,10 @@ import { CarToken } from 'state/stateTypes'
 import { buyCar, getCars, mintBasicCar, sellCar } from '../blockchain/lib'
 import { state } from '../state/state'
 
-export class MarketplaceScene extends Phaser.Scene {
+export class CarSelectorScene extends Phaser.Scene {
   constructor() {
     super({
-      key: 'Marketplace',
+      key: 'CarSelector',
     })
   }
 

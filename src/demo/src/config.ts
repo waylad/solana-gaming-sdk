@@ -3,7 +3,9 @@ import { PreloaderScene } from './scenes/preloaderScene'
 import { ConnectWalletScene } from './scenes/connectWalletScene'
 import { GameScene } from './scenes/gameScene'
 import { GarageScene } from './scenes/garageScene'
-import { MarketplaceScene } from './scenes/MarketplaceScene'
+import { CarSelectorScene } from './scenes/carSelectorScene'
+import { LevelSelectorScene } from './scenes/levelSelectorScene'
+import { LevelEditorScene } from './scenes/levelEditorScene'
 import { BgScene } from './scenes/bgScene'
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
@@ -18,7 +20,16 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
     width: 1600,
     height: 900,
   },
-  scene: [PreloaderScene, BgScene, ConnectWalletScene, GarageScene, GameScene, MarketplaceScene],
+  scene: [
+    PreloaderScene,
+    BgScene,
+    ConnectWalletScene,
+    GarageScene,
+    GameScene,
+    CarSelectorScene,
+    LevelSelectorScene,
+    LevelEditorScene,
+  ],
   input: {
     keyboard: true,
     mouse: true,

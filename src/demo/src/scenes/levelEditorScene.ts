@@ -10,10 +10,10 @@ import {
 } from '../blockchain/lib'
 import { state } from '../state/state'
 
-export class MarketplaceScene extends Phaser.Scene {
+export class LevelEditorScene extends Phaser.Scene {
   constructor() {
     super({
-      key: 'Marketplace',
+      key: 'LevelEditor',
     })
   }
 
