@@ -62,11 +62,33 @@ export const getCars = async () => {
         })
       }
     })
-    // state.ownedCars = JSON.parse(localStorage.getItem('ownedCars') || '[]')
-    // console.log(state.ownedCars)
   } catch (e: any) {
     console.log(e)
-    // window.location.reload()
+  }
+}
+
+export const getLevels = async () => {
+  try {
+    state.ownedCars = []
+
+    const myNfts = await metaplex!.nfts().findAllByOwner({
+      owner: metaplex!.identity().publicKey,
+    })
+
+    console.log(myNfts)
+    myNfts.map((nft: any) => {
+      if (nft.name.indexOf('Level') >= 0) {
+        state.ownedLevels.push({
+          tokenId: `${Math.floor(Math.random() * 10000)}`,
+          pieces: [],
+          price: 0,
+          owned: true,
+          nft,
+        })
+      }
+    })
+  } catch (e: any) {
+    console.log(e)
   }
 }
 
@@ -143,7 +165,7 @@ export const mintBasicCarWithoutRoyalties = async () => {
 export const mintLevel = async (name: string) => {
   const { nft } = await metaplex!.nfts().create({
     uri: 'https://solana-gaming-sdk.pages.dev/assets/levels/defaultLevel.json',
-    name,
+    name: `Level ${name}`,
     symbol: 'LEVEL',
     sellerFeeBasisPoints: 500, // Represents 5.00%.
   })

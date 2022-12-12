@@ -6,6 +6,14 @@ export type CarToken = {
   nft: any
 }
 
+export type LevelToken = {
+  tokenId: string
+  price: number
+  owned: boolean
+  pieces: any[]
+  nft: any
+}
+
 export type State = {
   startTerrainHeight: number,
   amplitude: number,
@@ -21,4 +29,7 @@ export type State = {
   ownedCars: CarToken[],
   onSaleCars: CarToken[],
   currentCar: CarToken | null,
+  ownedLevels: LevelToken[],
+  onSaleLevels: LevelToken[],
+  currentLevel: LevelToken | null,
 }

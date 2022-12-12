@@ -25,4 +25,7 @@ export let state: State = {
   ownedCars: [],
   onSaleCars: [],
   currentCar: null,
+  ownedLevels: [],
+  onSaleLevels: [],
+  currentLevel: null,
 }

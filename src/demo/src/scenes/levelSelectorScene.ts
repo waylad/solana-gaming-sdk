@@ -1,13 +1,6 @@
-import { CarToken } from 'state/stateTypes'
+import { LevelToken } from 'state/stateTypes'
 
-import {
-  buyCar,
-  getCars,
-  isRoyaltyPaid,
-  mintBasicCarWithoutRoyalties,
-  mintBasicCarWithRoyalties,
-  payRoyalty,
-} from '../blockchain/lib'
+import { getLevels, mintLevel } from '../blockchain/lib'
 import { state } from '../state/state'
 
 export class LevelSelectorScene extends Phaser.Scene {
@@ -21,61 +14,20 @@ export class LevelSelectorScene extends Phaser.Scene {
 
   preload(): void {}
 
-  async displayCar(this: Phaser.Scene, car: CarToken, i: number, j: number) {
-    const carCell = this.add.image(0, 0, 'car-bg')
-    const partCar = this.add.image(0, 0, `car${car.carCode[0]}`)
-    const partBoost = this.add.image(0, 0, `boost${car.carCode[1]}`)
-    const partWeight = this.add.image(0, 0, `weight${car.carCode[2]}`)
-    const partGun = this.add.image(0, 0, `gun${car.carCode[3]}`)
-    const partGear = this.add.image(0, 0, `gear${car.carCode[4]}`)
-    const partArmor = this.add.image(0, 0, `armor${car.carCode[5]}`)
-    const partWheel = this.add.image(0, 0, `wheel${car.carCode[6]}`)
-    const partFuel = this.add.image(0, 0, `fuel${car.carCode[7]}`)
-
-    const royaltyPaid = await isRoyaltyPaid(car)
-
-    const textRoyalties = this.add
-      .text(0, 135, `${royaltyPaid ? 'ROYALTIES OK' : 'MISSING ROYALTIES'}`, {
-        fontFamily: 'Electrolize',
-        align: 'center',
-        wordWrap: { width: 330, useAdvancedWrap: true },
-      })
-      .setFontSize(30)
-      .setOrigin(0.5)
-      .setColor('#ECE0C4')
-
-    // Buy
-    // let buttonBuy: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    // if (!car.owned) buttonBuy = this.add.image(-80, 160, 'button-small')
-    // buttonBuy.setInteractive({ cursor: 'pointer' })
-    // buttonBuy.on('pointerdown', async () => {
-    //   await buyCar(car)
-    //   await getCars()
-    //   this.scene.restart()
-    // })
-    // let textBuy: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    // if (!car.owned)
-    //   textBuy = new Phaser.GameObjects.Text(this, -110, 144, 'BUY', {
-    //     fontFamily: 'Electrolize',
-    //     align: 'center',
-    //     wordWrap: { width: 140, useAdvancedWrap: true },
-    //   })
-    //     .setFontSize(30)
-    //     .setOrigin(0)
-    //     .setColor('#ECE0C4')
+  async displayLevel(this: Phaser.Scene, level: LevelToken, i: number, j: number) {
+    const levelCell = this.add.image(0, 0, 'level-bg')
 
     // Select
     let buttonSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    if (car.owned) buttonSelect = this.add.image(0, 200, 'button-small')
+    if (level.owned) buttonSelect = this.add.image(0, 200, 'button-small')
     buttonSelect.setInteractive({ cursor: 'pointer' })
     buttonSelect.on('pointerdown', async () => {
-      state.currentCar = car
-      if(!royaltyPaid) await payRoyalty(car)
+      state.currentLevel = level
       this.scene.start('Garage')
     })
     let textSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    if (car.owned)
-      textSelect = new Phaser.GameObjects.Text(this, 0, 204, royaltyPaid ? 'PLAY' : 'UNLOCK (1 SOL)', {
+    if (level.owned)
+      textSelect = new Phaser.GameObjects.Text(this, 0, 204, 'PLAY', {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 330, useAdvancedWrap: true },
@@ -84,42 +36,12 @@ export class LevelSelectorScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setColor('#ECE0C4')
 
-    // // Sell
-    // let buttonSell: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    // if (car.owned) buttonSell = this.add.image(80, 160, 'button-small')
-    // buttonSell.setInteractive({ cursor: 'pointer' })
-    // buttonSell.on('pointerdown', async () => {
-    //   const price = parseInt(prompt('Please enter your price', '1000000') || '1000000')
-    //   await sellCar(car, price)
-    //   await getCars()
-    // })
-    // let textSell: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
-    // if (car.owned)
-    //   textSell = new Phaser.GameObjects.Text(this, 50, 144, 'SELL', {
-    //     fontFamily: 'Electrolize',
-    //     align: 'center',
-    //     wordWrap: { width: 140, useAdvancedWrap: true },
-    //   })
-    //     .setFontSize(30)
-    //     .setOrigin(0)
-    //     .setColor('#ECE0C4')
-
-    let carContainer = this.add.container(0, 0, [
-      partCar,
-      partBoost,
-      partWeight,
-      partGun,
-      partGear,
-      partArmor,
-      partWheel,
-      partFuel,
-    ])
-    carContainer.setScale(0.4)
+    let levelContainer = this.add.container(0, 0, [])
+    levelContainer.setScale(0.4)
 
     this.add.container(this.sys.canvas.width / 2 - 580 + (i % 4) * 380, this.sys.canvas.height / 2 - 290 + j * 360, [
-      carCell,
-      textRoyalties,
-      carContainer,
+      levelCell,
+      levelContainer,
       buttonSelect,
       textSelect,
     ])
@@ -144,7 +66,7 @@ export class LevelSelectorScene extends Phaser.Scene {
     )
 
     this.add
-      .text(50, 15, 'MY CARS', {
+      .text(50, 15, 'MY LEVELS', {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 240, useAdvancedWrap: true },
@@ -154,17 +76,16 @@ export class LevelSelectorScene extends Phaser.Scene {
       .setColor('#ECE0C4')
 
     for (let i = 0; i < 4; i++) {
-      let car = state.ownedCars[i]
-      if (car && car.carCode) {
-        this.displayCar(car, i, 0)
+      let level = state.ownedLevels[i]
+      if (level && level.tokenId) {
+        this.displayLevel(level, i, 0)
       }
     }
 
-    // BUY CAR WITH ROYALTIES
     const button1Bg = this.add.image(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'button-big')
     button1Bg.setInteractive({ cursor: 'pointer' })
     const button1Text = this.add
-      .text(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'BUY CAR WITH ROYALTIES', {
+      .text(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'BUY LEVEL', {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 600, useAdvancedWrap: true },
@@ -174,45 +95,29 @@ export class LevelSelectorScene extends Phaser.Scene {
     button1Bg.on('pointerdown', async () => {
       button1Text.setText('LOADING...')
       try {
-        await mintBasicCarWithRoyalties()
-        await getCars()
-        button1Text.setText('BUY CAR WITH ROYALTIES')
+        await mintLevel('Official')
+        await getLevels()
+        button1Text.setText('BUY LEVEL')
         this.scene.restart()
       } catch (e: any) {
         console.log(e)
-        button1Text.setText('BUY CAR WITH ROYALTIES')
+        button1Text.setText('BUY LEVEL')
         alert(e)
       }
     })
 
-    // BUY CAR WITHOUT ROYALTIES
-    const button2Bg = this.add.image(this.sys.canvas.width / 2 + 350, this.sys.canvas.height - 100, 'button-big')
-    button2Bg.setInteractive({ cursor: 'pointer' })
-    const button2Text = this.add
-      .text(
-        this.sys.canvas.width / 2 + 350,
-        this.sys.canvas.height - 100,
-        'BUY CAR WITHOUT ROYALTIES\n(FOR DEMO PURPOSES)',
-        {
-          fontFamily: 'Electrolize',
-          align: 'center',
-          wordWrap: { width: 600, useAdvancedWrap: true },
-        },
-      )
+    const buttonCreateBg = this.add.image(this.sys.canvas.width / 2, this.sys.canvas.height - 100, 'button-big')
+    buttonCreateBg.setInteractive({ cursor: 'pointer' })
+    const buttonCreateText = this.add
+      .text(this.sys.canvas.width / 2, this.sys.canvas.height - 100, 'CREATE & SELL LEVEL', {
+        fontFamily: 'Electrolize',
+        align: 'center',
+        wordWrap: { width: 600, useAdvancedWrap: true },
+      })
       .setFontSize(34)
       .setOrigin(0.5)
-    button2Bg.on('pointerdown', async () => {
-      button2Text.setText('LOADING...')
-      try {
-        await mintBasicCarWithoutRoyalties()
-        await getCars()
-        button2Text.setText('BUY CAR WITHOUT ROYALTIES\n(FOR DEMO PURPOSES)')
-        this.scene.restart()
-      } catch (e: any) {
-        console.log(e)
-        button2Text.setText('BUY CAR WITHOUT ROYALTIES\n(FOR DEMO PURPOSES)')
-        alert(e)
-      }
+    buttonCreateBg.on('pointerdown', async () => {
+      this.scene.start('LevelEditor')
     })
   }
 
