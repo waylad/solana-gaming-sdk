@@ -3,6 +3,7 @@ import { CarToken } from 'state/stateTypes'
 import {
   buyCar,
   getCars,
+  getLevels,
   isRoyaltyPaid,
   mintBasicCarWithoutRoyalties,
   mintBasicCarWithRoyalties,
@@ -71,6 +72,7 @@ export class CarSelectorScene extends Phaser.Scene {
     buttonSelect.on('pointerdown', async () => {
       state.currentCar = car
       if(!royaltyPaid) await payRoyalty(car)
+      await getLevels()
       this.scene.start('LevelSelector')
     })
     let textSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})

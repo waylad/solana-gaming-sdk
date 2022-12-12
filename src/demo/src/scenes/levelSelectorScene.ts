@@ -14,9 +14,7 @@ export class LevelSelectorScene extends Phaser.Scene {
 
   preload(): void {}
 
-  async displayLevel(this: Phaser.Scene, level: LevelToken, i: number, j: number) {
-    const levelCell = this.add.image(0, 0, 'level-bg')
-
+  async displayLevel(this: Phaser.Scene, level: LevelToken, i: number) {    
     // Select
     let buttonSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
     if (level.owned) buttonSelect = this.add.image(0, 200, 'button-small')
@@ -27,7 +25,7 @@ export class LevelSelectorScene extends Phaser.Scene {
     })
     let textSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
     if (level.owned)
-      textSelect = new Phaser.GameObjects.Text(this, 0, 204, 'PLAY', {
+      textSelect = new Phaser.GameObjects.Text(this, 0, 204, level.nft.name, {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 330, useAdvancedWrap: true },
@@ -39,8 +37,7 @@ export class LevelSelectorScene extends Phaser.Scene {
     let levelContainer = this.add.container(0, 0, [])
     levelContainer.setScale(0.4)
 
-    this.add.container(this.sys.canvas.width / 2 - 580 + (i % 4) * 380, this.sys.canvas.height / 2 - 290 + j * 360, [
-      levelCell,
+    this.add.container(this.sys.canvas.width / 2 - 580, this.sys.canvas.height / 2 - 290 + i * 260, [
       levelContainer,
       buttonSelect,
       textSelect,
@@ -78,38 +75,38 @@ export class LevelSelectorScene extends Phaser.Scene {
     for (let i = 0; i < 4; i++) {
       let level = state.ownedLevels[i]
       if (level && level.tokenId) {
-        this.displayLevel(level, i, 0)
+        this.displayLevel(level, i)
       }
     }
 
-    const button1Bg = this.add.image(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'button-big')
-    button1Bg.setInteractive({ cursor: 'pointer' })
-    const button1Text = this.add
-      .text(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'BUY LEVEL', {
+    const buttonLevelBg = this.add.image(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'button-big')
+    buttonLevelBg.setInteractive({ cursor: 'pointer' })
+    const buttonLevelText = this.add
+      .text(this.sys.canvas.width / 2 - 350, this.sys.canvas.height - 100, 'BUY OFFICIAL LEVEL', {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 600, useAdvancedWrap: true },
       })
       .setFontSize(34)
       .setOrigin(0.5)
-    button1Bg.on('pointerdown', async () => {
-      button1Text.setText('LOADING...')
+    buttonLevelBg.on('pointerdown', async () => {
+      buttonLevelText.setText('LOADING...')
       try {
         await mintLevel('Official')
         await getLevels()
-        button1Text.setText('BUY LEVEL')
+        buttonLevelText.setText('BUY OFFICIAL LEVEL')
         this.scene.restart()
       } catch (e: any) {
         console.log(e)
-        button1Text.setText('BUY LEVEL')
+        buttonLevelText.setText('BUY OFFICIAL LEVEL')
         alert(e)
       }
     })
 
-    const buttonCreateBg = this.add.image(this.sys.canvas.width / 2, this.sys.canvas.height - 100, 'button-big')
+    const buttonCreateBg = this.add.image(this.sys.canvas.width / 2 + 350, this.sys.canvas.height - 100, 'button-big')
     buttonCreateBg.setInteractive({ cursor: 'pointer' })
     const buttonCreateText = this.add
-      .text(this.sys.canvas.width / 2, this.sys.canvas.height - 100, 'CREATE & SELL LEVEL', {
+      .text(this.sys.canvas.width / 2 + 350, this.sys.canvas.height - 100, 'CREATE & SELL LEVEL', {
         fontFamily: 'Electrolize',
         align: 'center',
         wordWrap: { width: 600, useAdvancedWrap: true },
