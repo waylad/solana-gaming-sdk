@@ -31,7 +31,7 @@ export class ConnectWalletScene extends Phaser.Scene {
       try {
         await connectWallet()
         await getCars()
-        this.scene.start('Marketplace')
+        this.scene.start('CarSelector')
       } catch (e: any) {
         console.log(e)
         buttonText.setText('CONNECT WALLET')

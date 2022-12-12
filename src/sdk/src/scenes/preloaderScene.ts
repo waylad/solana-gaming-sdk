@@ -3,7 +3,7 @@ declare let WebFont: any
 export class PreloaderScene extends Phaser.Scene {
   constructor() {
     super({
-      key: 'PreloaderScene',
+      key: 'Preloader',
     })
   }
 

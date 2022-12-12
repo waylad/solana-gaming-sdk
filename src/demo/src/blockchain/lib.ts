@@ -19,9 +19,9 @@ import { getProvider } from './utils'
 
 let provider: PhantomProvider | undefined = undefined
 let connection: any = undefined
-let metaplex: any = undefined
+let metaplex: Metaplex | undefined = undefined
 let NETWORK: Cluster = 'devnet'
-let address: BigNumber | undefined = undefined
+let address: PublicKey | undefined = undefined
 
 export const connectWallet = async () => {
   try {
@@ -30,7 +30,6 @@ export const connectWallet = async () => {
     connection = new Connection(network)
     metaplex = new Metaplex(connection)
     address = metaplex.identity().publicKey
-    console.log(BigNumber(address!).toString())
     if (provider) {
       await provider.connect()
       await metaplex.use(walletAdapterIdentity(provider))
@@ -47,8 +46,8 @@ export const getCars = async () => {
   try {
     state.ownedCars = []
 
-    const myNfts = await metaplex.nfts().findAllByOwner({
-      owner: metaplex.identity().publicKey,
+    const myNfts = await metaplex!.nfts().findAllByOwner({
+      owner: metaplex!.identity().publicKey,
     })
 
     console.log(myNfts)
@@ -122,7 +121,7 @@ export const payRoyalty = async (carToken: CarToken) => {
 }
 
 export const mintBasicCarWithRoyalties = async () => {
-  const { nft } = await metaplex.nfts().create({
+  const { nft } = await metaplex!.nfts().create({
     uri: 'https://solana-gaming-sdk.pages.dev/assets/cars/00000000.json',
     name: 'Car 00000000',
     symbol: 'CAR',
@@ -132,11 +131,21 @@ export const mintBasicCarWithRoyalties = async () => {
 }
 
 export const mintBasicCarWithoutRoyalties = async () => {
-  const { nft } = await metaplex.nfts().create({
+  const { nft } = await metaplex!.nfts().create({
     uri: 'https://solana-gaming-sdk.pages.dev/assets/cars/00000000.json',
     name: 'Car 00000000',
     symbol: 'CAR',
     sellerFeeBasisPoints: 0, // Represents 0%.
+  })
+  console.log(nft)
+}
+
+export const mintLevel = async (name: string) => {
+  const { nft } = await metaplex!.nfts().create({
+    uri: 'https://solana-gaming-sdk.pages.dev/assets/levels/defaultLevel.json',
+    name,
+    symbol: 'LEVEL',
+    sellerFeeBasisPoints: 500, // Represents 5.00%.
   })
   console.log(nft)
 }

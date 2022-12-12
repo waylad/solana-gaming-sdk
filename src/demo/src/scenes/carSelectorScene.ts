@@ -71,7 +71,7 @@ export class CarSelectorScene extends Phaser.Scene {
     buttonSelect.on('pointerdown', async () => {
       state.currentCar = car
       if(!royaltyPaid) await payRoyalty(car)
-      this.scene.start('Garage')
+      this.scene.start('LevelSelector')
     })
     let textSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
     if (car.owned)
