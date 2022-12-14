@@ -190,7 +190,7 @@ export const mintLevel = async ({ name, price, structure }: { name: string; pric
   console.log(`Metadata uploaded to https://cloudflare-ipfs.com/ipfs/${metadataUri.cid}`)
 
   const { nft } = await metaplex!.nfts().create({
-    uri: `ipfs://${metadataUri.cid}`,
+    uri: `https://cloudflare-ipfs.com/ipfs/${metadataUri.cid}`, //`ipfs://${metadataUri.cid}`,
     name: `Level ${name}`,
     symbol: 'LEVEL',
     sellerFeeBasisPoints: 500, // Represents 5.00%.
