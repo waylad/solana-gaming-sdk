@@ -39,7 +39,7 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'matter',
     matter: {
-      debug: true,
+      debug: false,
     },
   },
   backgroundColor: '#000000',

@@ -49,7 +49,7 @@ export class PreloaderScene extends Phaser.Scene {
       progressBox.destroy()
       percentText.destroy()
       assetText.destroy()
-      this.scene.start(process.env.STARTING_SCENE || 'LevelEditor')
+      this.scene.start(process.env.STARTING_SCENE || 'ConnectWallet')
     })
 
     this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js')
