@@ -11,6 +11,7 @@ import {
 } from '@solana/web3.js'
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
+import { create } from 'ipfs-http-client'
 
 import { state } from '../state/state'
 import { CarToken } from '../state/stateTypes'
@@ -162,9 +163,34 @@ export const mintBasicCarWithoutRoyalties = async () => {
   console.log(nft)
 }
 
-export const mintLevel = async (name: string) => {
+export const mintLevel = async ({ name, price, structure }: { name: string; price: number; structure: any[] }) => {
+  Buffer.from('ipfs', 'base64')
+
+  const projectId = '29iQPvAdeIYGWCcM2wOQZLMljbt'
+  const projectSecret = '95b36673339827ad7547cf8aff56d82b'
+  const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+  const client = create({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    headers: {
+      authorization: auth,
+    },
+  })
+
+  const metadataUri = await client.add(
+    JSON.stringify({
+      name: name,
+      description: 'A Solana Gaming SDK Level',
+      external_url: 'https://solana-gaming-sdk.pages.dev/assets/zombie.svg',
+      image: 'https://solana-gaming-sdk.pages.dev/assets/zombie.svg',
+      attributes: structure,
+    }),
+  )
+  console.log(`Metadata uploaded to https://cloudflare-ipfs.com/ipfs/${metadataUri.cid}`)
+
   const { nft } = await metaplex!.nfts().create({
-    uri: 'https://solana-gaming-sdk.pages.dev/assets/levels/defaultLevel.json',
+    uri: `ipfs://${metadataUri.cid}`,
     name: `Level ${name}`,
     symbol: 'LEVEL',
     sellerFeeBasisPoints: 500, // Represents 5.00%.

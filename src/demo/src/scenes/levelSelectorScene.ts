@@ -14,7 +14,7 @@ export class LevelSelectorScene extends Phaser.Scene {
 
   preload(): void {}
 
-  async displayLevel(this: Phaser.Scene, level: LevelToken, i: number) {    
+  async displayLevel(this: Phaser.Scene, level: LevelToken, i: number) {
     // Select
     let buttonSelect: any = new Phaser.GameObjects.Text(this, 0, 0, '', {})
     if (level.owned) buttonSelect = this.add.image(0, 200, 'button-small')
@@ -92,7 +92,7 @@ export class LevelSelectorScene extends Phaser.Scene {
     buttonLevelBg.on('pointerdown', async () => {
       buttonLevelText.setText('LOADING...')
       try {
-        await mintLevel('Official')
+        await mintLevel({ name: 'Official', price: 1, structure: [] })
         await getLevels()
         buttonLevelText.setText('BUY OFFICIAL LEVEL')
         this.scene.restart()
