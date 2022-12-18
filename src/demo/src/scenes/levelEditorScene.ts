@@ -48,7 +48,7 @@ export class LevelEditorScene extends Phaser.Scene {
       .setOrigin(0.5)
     buttonCreateBg.on('pointerdown', async () => {
       const name = prompt('Level name', 'My Level') || 'My Level'
-      const price = parseInt(prompt('Level price', '1000000') || '1000000')
+      const price = parseInt(prompt('Level price', '1') || '1')
       const structure: any[] = []
       this.floorPool.forEach((rect: Phaser.GameObjects.Rectangle) =>
         structure.push({

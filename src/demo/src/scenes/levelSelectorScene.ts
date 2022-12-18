@@ -37,7 +37,7 @@ export class LevelSelectorScene extends Phaser.Scene {
     let levelContainer = this.add.container(0, 0, [])
     levelContainer.setScale(0.4)
 
-    this.add.container(this.sys.canvas.width / 2 - 580, this.sys.canvas.height / 2 - 290 + i * 260, [
+    this.add.container(this.sys.canvas.width / 2 - 580, 40 + i * 100, [
       levelContainer,
       buttonSelect,
       textSelect,
