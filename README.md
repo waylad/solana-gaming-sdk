@@ -17,7 +17,7 @@ This repository is a full-featured gaming SDK to create GameFi projects on Solan
 
 # Demo Video :
 
-Coming soon...
+https://youtu.be/XZOntC7LhTw
 
 # Play Demo
 
